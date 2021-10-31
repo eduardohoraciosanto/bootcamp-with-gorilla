@@ -26,15 +26,19 @@ func NewHTTPRouter(svc service.CartService, hsvc health.Service) *mux.Router {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/health", hc.Health).Methods(http.MethodGet)
+
+	//Cart Endpoints
 	r.HandleFunc("/cart", cc.CreateCart).Methods(http.MethodPost)
 	r.HandleFunc("/cart/{cart_id}", cc.GetCart).Methods(http.MethodGet)
-	r.HandleFunc("/cart/{cart_id}/item", cc.AddItem).Methods(http.MethodPost)
-	r.HandleFunc("/cart/{cart_id}/item/{item_id:[0-9]+}", cc.UpdateQuantity).Methods(http.MethodPut)
-
-	r.HandleFunc("/cart/{cart_id}/item/all", cc.RemoveAllItems).Methods(http.MethodDelete)
-	r.HandleFunc("/cart/{cart_id}/item/{item_id:[0-9]+}", cc.RemoveItem).Methods(http.MethodDelete)
 	r.HandleFunc("/cart/{cart_id}", cc.DeleteCart).Methods(http.MethodDelete)
 
+	//Item Operations on Cart
+	r.HandleFunc("/cart/{cart_id}/item", cc.AddItem).Methods(http.MethodPost)
+	r.HandleFunc("/cart/{cart_id}/item/{item_id:[0-9]+}", cc.UpdateQuantity).Methods(http.MethodPut)
+	r.HandleFunc("/cart/{cart_id}/item/all", cc.RemoveAllItems).Methods(http.MethodDelete)
+	r.HandleFunc("/cart/{cart_id}/item/{item_id:[0-9]+}", cc.RemoveItem).Methods(http.MethodDelete)
+
+	//Items Endpoints
 	r.HandleFunc("/items/available", ic.GetAllItems).Methods(http.MethodGet)
 	r.HandleFunc("/items/{item_id}", ic.GetItem).Methods(http.MethodGet)
 

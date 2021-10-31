@@ -8,7 +8,7 @@ info:
     url: https://github.com/eduardohoraciosanto
 
 servers:
-  - url: "http://localhost:8080"
+  - url: "http://localhost:18080"
     description: Local Environment
 paths:
   /health:
@@ -47,14 +47,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /cart/{cartID}:
+  /cart/{cart_id}:
     get:
       tags:
         - Cart
       summary: Get a Cart
       parameters:
         - in: path
-          name: cartID
+          name: cart_id
           schema:
             type: string
           required: true
@@ -84,7 +84,7 @@ paths:
       summary: Delete a Cart
       parameters:
         - in: path
-          name: cartID
+          name: cart_id
           schema:
             type: string
           required: true
@@ -108,14 +108,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /cart/{cartID}/item:
+  /cart/{cart_id}/item:
     post:
       tags:
         - Item
       summary: Add Item to a Cart
       parameters:
         - in: path
-          name: cartID
+          name: cart_id
           schema:
             type: string
           required: true
@@ -151,20 +151,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /cart/{cartID}/item/{itemID}:
+  /cart/{cart_id}/item/{item_id}:
     put:
       tags:
         - Item
       summary: Modify Item quantity on Cart
       parameters:
         - in: path
-          name: cartID
+          name: cart_id
           schema:
             type: string
           required: true
           description: Unique ID of the Cart to modify the item of
         - in: path
-          name: itemID
+          name: item_id
           schema:
             type: string
           required: true
@@ -206,13 +206,13 @@ paths:
       summary: Delete Item from Cart
       parameters:
         - in: path
-          name: cartID
+          name: cart_id
           schema:
             type: string
           required: true
           description: Unique ID of the Cart to delete the item from
         - in: path
-          name: itemID
+          name: item_id
           schema:
             type: string
           required: true
@@ -248,14 +248,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /cart/{cartID}/item/all:
+  /cart/{cart_id}/item/all:
     delete:
       tags:
         - Item
       summary: Delete all Items from a Cart
       parameters:
         - in: path
-          name: cartID
+          name: cart_id
           schema:
             type: string
           required: true
@@ -275,6 +275,55 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: Cart/Item Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /items:
+    get:
+      tags:
+        - Item
+      summary: Get all available items from external provider
+      responses:
+        "200":
+          description: All Items Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAllItemsResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /items/{item_id}:
+    get:
+      tags:
+        - Item
+      summary: Get a particular item from external provider
+      parameters:
+        - in: path
+          name: item_id
+          schema:
+            type: string
+          required: true
+          description: Unique ID of the Item to get from the provider
+      responses:
+        "200":
+          description: Item Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetItemResponse"
+        "404":
+          description: Item Not Found
           content:
             application/json:
               schema:
@@ -363,6 +412,21 @@ components:
         quantity:
           description: Amount of item to put in the Cart
           type: integer
+    GetAllItemsResponse:
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Item"
+    GetItemResponse:
+      properties:
+        meta:
+          $ref: "#/components/schemas/Meta"
+        data:
+          $ref: "#/components/schemas/Item"
+
 tags:
   - name: Health
     description: Health Endpoint

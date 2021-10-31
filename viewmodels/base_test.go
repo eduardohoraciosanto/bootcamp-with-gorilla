@@ -24,7 +24,7 @@ func TestRespondWithData(t *testing.T) {
 
 func TestRespondWithErrNotFound(t *testing.T) {
 	r := httptest.NewRecorder()
-	mErr := &serviceErrors.ServiceError{
+	mErr := serviceErrors.ServiceError{
 		Code: serviceErrors.CartNotFoundCode,
 	}
 	viewmodels.RespondWithError(r, mErr)
@@ -36,8 +36,20 @@ func TestRespondWithErrNotFound(t *testing.T) {
 
 func TestRespondWithErrItemNotFound(t *testing.T) {
 	r := httptest.NewRecorder()
-	mErr := &serviceErrors.ServiceError{
+	mErr := serviceErrors.ServiceError{
 		Code: serviceErrors.ItemNotFoundCode,
+	}
+	viewmodels.RespondWithError(r, mErr)
+
+	if r.Result().StatusCode != http.StatusNotFound {
+		t.Fatalf("Unexpected Status Code")
+	}
+}
+
+func TestRespondWithErrItemNotFoundOnProvider(t *testing.T) {
+	r := httptest.NewRecorder()
+	mErr := serviceErrors.ServiceError{
+		Code: serviceErrors.ItemNotFoundOnProviderCode,
 	}
 	viewmodels.RespondWithError(r, mErr)
 
@@ -48,7 +60,7 @@ func TestRespondWithErrItemNotFound(t *testing.T) {
 
 func TestRespondWithErrUnprocessableEntity(t *testing.T) {
 	r := httptest.NewRecorder()
-	mErr := &serviceErrors.ServiceError{
+	mErr := serviceErrors.ServiceError{
 		Code: serviceErrors.ItemAlreadyInCartCode,
 	}
 	viewmodels.RespondWithError(r, mErr)
@@ -60,7 +72,7 @@ func TestRespondWithErrUnprocessableEntity(t *testing.T) {
 
 func TestRespondWithErrInternal(t *testing.T) {
 	r := httptest.NewRecorder()
-	mErr := &serviceErrors.ServiceError{
+	mErr := serviceErrors.ServiceError{
 		Code: "some Error Code",
 	}
 	viewmodels.RespondWithError(r, mErr)
@@ -81,7 +93,7 @@ func TestRespondWithErrInternalDefault(t *testing.T) {
 
 func TestRespondWithErrBadReq(t *testing.T) {
 	r := httptest.NewRecorder()
-	mErr := &viewmodels.Error{
+	mErr := viewmodels.Error{
 		Code: viewmodels.ErrCodeBadRequest,
 	}
 	viewmodels.RespondWithError(r, mErr)
@@ -93,7 +105,7 @@ func TestRespondWithErrBadReq(t *testing.T) {
 
 func TestRespondWithErrViewInternalError(t *testing.T) {
 	r := httptest.NewRecorder()
-	mErr := &viewmodels.Error{
+	mErr := viewmodels.Error{
 		Code: "SomeCode",
 	}
 	viewmodels.RespondWithError(r, mErr)

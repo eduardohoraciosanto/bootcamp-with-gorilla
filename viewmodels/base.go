@@ -61,8 +61,8 @@ func statusCodeFromError(err error) int {
 			return http.StatusInternalServerError
 		}
 	}
-	vErr, ok := err.(*Error)
-	if ok {
+	vErr := &Error{}
+	if errors.As(err, vErr) {
 		switch vErr.Code {
 		case ErrCodeBadRequest:
 			return http.StatusBadRequest

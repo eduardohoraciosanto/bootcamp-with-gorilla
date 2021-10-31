@@ -126,7 +126,7 @@ func TestAddItemBadRequest(t *testing.T) {
 	req, _ := http.NewRequest(http.MethodPost, "", bytes.NewReader([]byte("badBody")))
 	c.AddItem(r, req)
 
-	if r.Result().StatusCode != http.StatusInternalServerError {
+	if r.Result().StatusCode != http.StatusBadRequest {
 		t.Fatalf("Unexpected Status Code: %d", r.Result().StatusCode)
 	}
 }
@@ -171,7 +171,7 @@ func TestUpdateQuantityBadRequest(t *testing.T) {
 	req, _ := http.NewRequest(http.MethodPut, "", bytes.NewReader([]byte("badBody")))
 	c.UpdateQuantity(r, req)
 
-	if r.Result().StatusCode != http.StatusInternalServerError {
+	if r.Result().StatusCode != http.StatusBadRequest {
 		t.Fatalf("Unexpected Status Code")
 	}
 }

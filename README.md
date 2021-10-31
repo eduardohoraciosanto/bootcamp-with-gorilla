@@ -30,8 +30,8 @@ Documentation of the endpoints will be done using OpenAPI spec in Swagger format
 
 | Method   |      URL    | Desc |
 |----------|-------------|---   |
-| GET | http://challenge.getsandbox.com/articles | To get all available articles |
-| GET | http://challenge.getsandbox.com/articles/{articleId} | To get an specific artible by id. It returns `404` if the _articleId_ is not found |
+| GET | https://bootcamp-products.getsandbox.com/products | To get all available products |
+| GET | https://bootcamp-products.getsandbox.com/products/{id} | To get an specific product by id. It returns `404` if the _id_ is not found |
 
 ---
 

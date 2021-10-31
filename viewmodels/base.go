@@ -53,7 +53,7 @@ func statusCodeFromError(err error) int {
 	mErr := &serviceErrors.ServiceError{}
 	if errors.As(err, mErr) {
 		switch mErr.Code {
-		case serviceErrors.CartNotFoundCode, serviceErrors.ItemNotFoundCode:
+		case serviceErrors.CartNotFoundCode, serviceErrors.ItemNotFoundCode, serviceErrors.ItemNotFoundOnProviderCode:
 			return http.StatusNotFound
 		case serviceErrors.ItemAlreadyInCartCode:
 			return http.StatusUnprocessableEntity
@@ -77,6 +77,8 @@ func statusCodeFromError(err error) int {
 func descriptionFromError(mErr *serviceErrors.ServiceError) string {
 
 	switch mErr.Code {
+	case serviceErrors.ItemNotFoundOnProviderCode:
+		return ErrDescriptionItemNotFoundProvider
 	case serviceErrors.CartNotFoundCode:
 		return ErrDescriptionCartNotFound
 	case serviceErrors.ItemAlreadyInCartCode:

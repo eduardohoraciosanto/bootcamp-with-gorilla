@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/errors"
 	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/models"
 	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/viewmodels"
 
@@ -67,6 +68,9 @@ func (e *externalService) GetItem(id string) (models.Item, error) {
 	res, err := e.client.Get(articlesEndpoint + "/" + id)
 	if err != nil {
 		return models.Item{}, err
+	}
+	if res.StatusCode == http.StatusNotFound {
+		return models.Item{}, errors.ServiceError{Code: errors.ItemNotFoundOnProviderCode}
 	}
 	eItem := viewmodels.ExternalGetItemResponse{}
 

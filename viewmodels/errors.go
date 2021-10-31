@@ -14,6 +14,8 @@ const (
 
 	ErrDescriptionItemAlreadyInCart = "The item already exists in the cart"
 	ErrDescriptionItemNotFound      = "The item does not exists in the cart"
+
+	ErrDescriptionItemNotFoundProvider = "The item was not found on the provider"
 )
 
 var (

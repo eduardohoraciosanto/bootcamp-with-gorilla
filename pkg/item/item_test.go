@@ -114,6 +114,22 @@ func TestGetItem(t *testing.T) {
 		t.Fatalf("Error was not expected")
 	}
 }
+func TestGetItemNotFound(t *testing.T) {
+
+	svc := item.NewExternalService(
+		logrus.New(),
+		&itemClientMock{
+			shouldFail:         false,
+			response:           nil,
+			responseStatusCode: 404,
+		},
+	)
+
+	_, err := svc.GetItem("someItemID")
+	if err == nil {
+		t.Fatalf("Error was not expected")
+	}
+}
 func TestGetItemApiFailure(t *testing.T) {
 
 	svc := item.NewExternalService(
@@ -255,8 +271,9 @@ func TestGetAllItemsFloatParseError(t *testing.T) {
 //*****ItemClientMock
 
 type itemClientMock struct {
-	response   interface{}
-	shouldFail bool
+	response           interface{}
+	responseStatusCode int
+	shouldFail         bool
 }
 
 func (i *itemClientMock) Get(url string) (*http.Response, error) {
@@ -266,5 +283,8 @@ func (i *itemClientMock) Get(url string) (*http.Response, error) {
 	b, _ := json.Marshal(i.response)
 	resp := &http.Response{}
 	resp.Body = ioutil.NopCloser(bytes.NewReader(b))
+	if i.responseStatusCode != 0 {
+		resp.StatusCode = i.responseStatusCode
+	}
 	return resp, nil
 }

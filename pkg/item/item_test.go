@@ -14,16 +14,97 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+func TestHealthOK(t *testing.T) {
+
+	svc := item.NewExternalService(
+		logrus.New(),
+		&itemClientMock{
+			shouldFail: false,
+			response: viewmodels.ExternalHealthResponse{
+				Meta: viewmodels.ExternalMeta{
+					Version: "testing",
+				},
+				Data: viewmodels.ExternalHealth{
+					Status: "OK",
+				},
+			},
+		},
+	)
+
+	err := svc.Health()
+	if err != nil {
+		t.Fatalf("Error was not expected")
+	}
+}
+
+func TestHealthStatusIncorrect(t *testing.T) {
+
+	svc := item.NewExternalService(
+		logrus.New(),
+		&itemClientMock{
+			shouldFail: false,
+			response: viewmodels.ExternalHealthResponse{
+				Meta: viewmodels.ExternalMeta{
+					Version: "testing",
+				},
+				Data: viewmodels.ExternalHealth{
+					Status: "Incorrect",
+				},
+			},
+		},
+	)
+
+	err := svc.Health()
+	if err == nil {
+		t.Fatalf("Error was expected")
+	}
+}
+func TestHealthError(t *testing.T) {
+
+	svc := item.NewExternalService(
+		logrus.New(),
+		&itemClientMock{
+			shouldFail: true,
+			response:   nil,
+		},
+	)
+
+	err := svc.Health()
+	if err == nil {
+		t.Fatalf("Error was expected")
+	}
+}
+func TestHealthDecodingError(t *testing.T) {
+
+	svc := item.NewExternalService(
+		logrus.New(),
+		&itemClientMock{
+			shouldFail: false,
+			response:   "notAJSON",
+		},
+	)
+
+	err := svc.Health()
+	if err == nil {
+		t.Fatalf("Error was expected")
+	}
+}
+
 func TestGetItem(t *testing.T) {
 
 	svc := item.NewExternalService(
 		logrus.New(),
 		&itemClientMock{
 			shouldFail: false,
-			response: viewmodels.ExternalItem{
-				ID:    "someItemID",
-				Title: "Some Item ID",
-				Price: "12.34",
+			response: viewmodels.ExternalGetItemResponse{
+				Meta: viewmodels.ExternalMeta{
+					Version: "testing",
+				},
+				Data: viewmodels.ExternalItem{
+					ID:    "someItemID",
+					Name:  "Some Item ID",
+					Price: "12.34",
+				},
 			},
 		},
 	)
@@ -33,7 +114,6 @@ func TestGetItem(t *testing.T) {
 		t.Fatalf("Error was not expected")
 	}
 }
-
 func TestGetItemApiFailure(t *testing.T) {
 
 	svc := item.NewExternalService(
@@ -49,7 +129,6 @@ func TestGetItemApiFailure(t *testing.T) {
 		t.Fatalf("Error was expected")
 	}
 }
-
 func TestGetItemWrongResponse(t *testing.T) {
 
 	svc := item.NewExternalService(
@@ -65,17 +144,21 @@ func TestGetItemWrongResponse(t *testing.T) {
 		t.Fatalf("Error was expected")
 	}
 }
-
 func TestGetItemFloatParseError(t *testing.T) {
 
 	svc := item.NewExternalService(
 		logrus.New(),
 		&itemClientMock{
 			shouldFail: false,
-			response: viewmodels.ExternalItem{
-				ID:    "someItemID",
-				Title: "Some Item ID",
-				Price: "ThisisNotANumber",
+			response: viewmodels.ExternalGetItemResponse{
+				Meta: viewmodels.ExternalMeta{
+					Version: "testing",
+				},
+				Data: viewmodels.ExternalItem{
+					ID:    "someItemID",
+					Name:  "Some Item ID",
+					Price: "notANumber",
+				},
 			},
 		},
 	)
@@ -92,11 +175,16 @@ func TestGetAllItems(t *testing.T) {
 		logrus.New(),
 		&itemClientMock{
 			shouldFail: false,
-			response: []viewmodels.ExternalItem{
-				{
-					ID:    "someItemID",
-					Title: "Some Item ID",
-					Price: "12.34",
+			response: viewmodels.ExternalGetAllItemsResponse{
+				Meta: viewmodels.ExternalMeta{
+					Version: "testing",
+				},
+				Data: []viewmodels.ExternalItem{
+					{
+						ID:    "someItemID",
+						Name:  "Some Item ID",
+						Price: "12.34",
+					},
 				},
 			},
 		},
@@ -107,7 +195,6 @@ func TestGetAllItems(t *testing.T) {
 		t.Fatalf("Error was not expected")
 	}
 }
-
 func TestGetAllItemsApiFailure(t *testing.T) {
 
 	svc := item.NewExternalService(
@@ -123,7 +210,6 @@ func TestGetAllItemsApiFailure(t *testing.T) {
 		t.Fatalf("Error was expected")
 	}
 }
-
 func TestGetAllItemsWrongResponse(t *testing.T) {
 
 	svc := item.NewExternalService(
@@ -139,18 +225,22 @@ func TestGetAllItemsWrongResponse(t *testing.T) {
 		t.Fatalf("Error was expected")
 	}
 }
-
 func TestGetAllItemsFloatParseError(t *testing.T) {
 
 	svc := item.NewExternalService(
 		logrus.New(),
 		&itemClientMock{
 			shouldFail: false,
-			response: []viewmodels.ExternalItem{
-				{
-					ID:    "someItemID",
-					Title: "Some Item ID",
-					Price: "ThisisNotANumber",
+			response: viewmodels.ExternalGetAllItemsResponse{
+				Meta: viewmodels.ExternalMeta{
+					Version: "testing",
+				},
+				Data: []viewmodels.ExternalItem{
+					{
+						ID:    "someItemID",
+						Name:  "Some Item ID",
+						Price: "notANumber",
+					},
 				},
 			},
 		},

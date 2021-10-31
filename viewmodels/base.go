@@ -3,6 +3,7 @@ package viewmodels
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/config"
@@ -93,16 +94,16 @@ func descriptionFromError(mErr *serviceErrors.ServiceError) string {
 }
 
 func viewModelFromError(err error) Error {
-	mErr, ok := err.(*serviceErrors.ServiceError)
-	if ok {
+	sErr := &serviceErrors.ServiceError{}
+	if errors.As(err, sErr) {
 		return Error{
-			Code:        mErr.Code,
-			Description: descriptionFromError(mErr),
+			Code:        err.Error(),
+			Description: descriptionFromError(sErr),
 		}
 	}
-	vErr, ok := err.(*Error)
-	if ok {
-		return *vErr
+	vErr := Error{}
+	if errors.As(err, &vErr) {
+		return vErr
 	}
 	return StandardInternalServerError
 }

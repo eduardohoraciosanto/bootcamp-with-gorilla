@@ -5,6 +5,7 @@ const (
 	ItemNotFoundCode      = "err_item_not_found"
 	ItemAlreadyInCartCode = "err_item_already_in_cart"
 	ExternalApiErrorCode  = "err_external_api_error"
+	CacheErrorCode        = "err_cache"
 )
 
 type ServiceError struct {

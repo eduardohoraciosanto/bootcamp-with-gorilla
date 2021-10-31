@@ -80,6 +80,13 @@ type externalAPIMocked struct {
 	externalAPIShouldFail bool
 }
 
+func (e *externalAPIMocked) Health() error {
+	if e.externalAPIShouldFail {
+		return fmt.Errorf("External API Mock was asked to fail")
+	}
+	return nil
+}
+
 func (e *externalAPIMocked) GetItem(id string) (models.Item, error) {
 	if e.externalAPIShouldFail {
 		return models.Item{}, fmt.Errorf("External API Mock was asked to fail")

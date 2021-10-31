@@ -478,15 +478,19 @@ func (c *cacheMock) Del(key string) error {
 	return nil
 }
 func (c *cacheMock) Alive() bool {
-	if c.shouldAliveFail {
-		return false
-	}
-	return true
+	return !c.shouldAliveFail
 }
 
 //External Service Mock
 type externalMock struct {
 	shouldFail bool
+}
+
+func (e *externalMock) Health() error {
+	if e.shouldFail {
+		return fmt.Errorf("External API Mock was asked to fail")
+	}
+	return nil
 }
 
 func (e *externalMock) GetItem(id string) (models.Item, error) {

@@ -44,7 +44,9 @@ func (s *service) CreateCart(ctx context.Context) (models.Cart, error) {
 	}
 
 	if err := s.cache.Set(cartID, cart); err != nil {
-		return models.Cart{}, err
+		return models.Cart{}, errors.ServiceError{
+			Code: errors.CacheErrorCode,
+		}
 	}
 
 	return cart, nil

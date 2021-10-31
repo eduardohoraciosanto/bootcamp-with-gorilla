@@ -26,7 +26,7 @@ func NewService(c cache.Cache, es item.ExternalService) Service {
 func (s *svc) HealthCheck() (service bool, externalAPI bool, cache bool, err error) {
 	externalApiHealth := true
 
-	_, exterr := s.externalService.GetAllItems()
+	exterr := s.externalService.Health()
 	if exterr != nil {
 		externalApiHealth = false
 	}

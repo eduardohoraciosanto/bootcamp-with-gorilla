@@ -1,5 +1,8 @@
 default:
 
+init:
+	@cp .env.template .env
+
 build:
 	@docker-compose build
 

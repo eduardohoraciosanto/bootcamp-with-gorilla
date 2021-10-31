@@ -1,7 +1,6 @@
 package viewmodels
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -50,14 +49,9 @@ func RespondWithError(w http.ResponseWriter, err error) error {
 	return json.NewEncoder(w).Encode(newBaseResponseWithError(viewModelFromError(err)))
 }
 
-func ErrorEncoder(_ context.Context, err error, w http.ResponseWriter) {
-	_ = RespondWithError(w, err)
-}
-
 func statusCodeFromError(err error) int {
-	mErr, ok := err.(*serviceErrors.ServiceError)
-
-	if ok {
+	mErr := &serviceErrors.ServiceError{}
+	if errors.As(err, mErr) {
 		switch mErr.Code {
 		case serviceErrors.CartNotFoundCode, serviceErrors.ItemNotFoundCode:
 			return http.StatusNotFound

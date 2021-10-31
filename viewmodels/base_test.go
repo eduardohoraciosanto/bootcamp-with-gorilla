@@ -1,7 +1,6 @@
 package viewmodels_test
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -99,14 +98,6 @@ func TestRespondWithErrViewInternalError(t *testing.T) {
 	}
 	viewmodels.RespondWithError(r, mErr)
 
-	if r.Result().StatusCode != http.StatusInternalServerError {
-		t.Fatalf("Unexpected Status Code")
-	}
-}
-
-func TestErrorEncoder(t *testing.T) {
-	r := httptest.NewRecorder()
-	viewmodels.ErrorEncoder(context.TODO(), fmt.Errorf("some Error"), r)
 	if r.Result().StatusCode != http.StatusInternalServerError {
 		t.Fatalf("Unexpected Status Code")
 	}

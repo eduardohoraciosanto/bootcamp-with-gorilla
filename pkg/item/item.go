@@ -5,13 +5,14 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/models"
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/viewmodels"
-	"github.com/go-kit/kit/log"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/models"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/viewmodels"
+
+	"github.com/sirupsen/logrus"
 )
 
 const (
-	articlesEndpoint = "http://challenge.getsandbox.com/articles"
+	articlesEndpoint = "https://bootcamp-products.getsandbox.com/products"
 )
 
 type ExternalService interface {
@@ -21,14 +22,14 @@ type ExternalService interface {
 
 type externalService struct {
 	client ItemClient
-	logger log.Logger
+	logger *logrus.Logger
 }
 
 type ItemClient interface {
 	Get(url string) (resp *http.Response, err error)
 }
 
-func NewExternalService(logger log.Logger, client ItemClient) ExternalService {
+func NewExternalService(logger *logrus.Logger, client ItemClient) ExternalService {
 
 	return &externalService{
 		logger: logger,

@@ -6,18 +6,18 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"testing"
 
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/item"
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/viewmodels"
-	"github.com/go-kit/kit/log"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/item"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/viewmodels"
+
+	"github.com/sirupsen/logrus"
 )
 
 func TestGetItem(t *testing.T) {
 
 	svc := item.NewExternalService(
-		log.NewJSONLogger(log.NewSyncWriter(os.Stdout)),
+		logrus.New(),
 		&itemClientMock{
 			shouldFail: false,
 			response: viewmodels.ExternalItem{
@@ -37,7 +37,7 @@ func TestGetItem(t *testing.T) {
 func TestGetItemApiFailure(t *testing.T) {
 
 	svc := item.NewExternalService(
-		log.NewJSONLogger(log.NewSyncWriter(os.Stdout)),
+		logrus.New(),
 		&itemClientMock{
 			shouldFail: true,
 			response:   nil,
@@ -53,7 +53,7 @@ func TestGetItemApiFailure(t *testing.T) {
 func TestGetItemWrongResponse(t *testing.T) {
 
 	svc := item.NewExternalService(
-		log.NewJSONLogger(log.NewSyncWriter(os.Stdout)),
+		logrus.New(),
 		&itemClientMock{
 			shouldFail: false,
 			response:   "WrongResponse",
@@ -69,7 +69,7 @@ func TestGetItemWrongResponse(t *testing.T) {
 func TestGetItemFloatParseError(t *testing.T) {
 
 	svc := item.NewExternalService(
-		log.NewJSONLogger(log.NewSyncWriter(os.Stdout)),
+		logrus.New(),
 		&itemClientMock{
 			shouldFail: false,
 			response: viewmodels.ExternalItem{
@@ -89,7 +89,7 @@ func TestGetItemFloatParseError(t *testing.T) {
 func TestGetAllItems(t *testing.T) {
 
 	svc := item.NewExternalService(
-		log.NewJSONLogger(log.NewSyncWriter(os.Stdout)),
+		logrus.New(),
 		&itemClientMock{
 			shouldFail: false,
 			response: []viewmodels.ExternalItem{
@@ -111,7 +111,7 @@ func TestGetAllItems(t *testing.T) {
 func TestGetAllItemsApiFailure(t *testing.T) {
 
 	svc := item.NewExternalService(
-		log.NewJSONLogger(log.NewSyncWriter(os.Stdout)),
+		logrus.New(),
 		&itemClientMock{
 			shouldFail: true,
 			response:   nil,
@@ -127,7 +127,7 @@ func TestGetAllItemsApiFailure(t *testing.T) {
 func TestGetAllItemsWrongResponse(t *testing.T) {
 
 	svc := item.NewExternalService(
-		log.NewJSONLogger(log.NewSyncWriter(os.Stdout)),
+		logrus.New(),
 		&itemClientMock{
 			shouldFail: false,
 			response:   "WrongResponse",
@@ -143,7 +143,7 @@ func TestGetAllItemsWrongResponse(t *testing.T) {
 func TestGetAllItemsFloatParseError(t *testing.T) {
 
 	svc := item.NewExternalService(
-		log.NewJSONLogger(log.NewSyncWriter(os.Stdout)),
+		logrus.New(),
 		&itemClientMock{
 			shouldFail: false,
 			response: []viewmodels.ExternalItem{

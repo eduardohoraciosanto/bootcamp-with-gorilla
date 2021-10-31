@@ -3,7 +3,7 @@ package viewmodels_test
 import (
 	"testing"
 
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/viewmodels"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/viewmodels"
 )
 
 func TestErrorInterface(t *testing.T) {

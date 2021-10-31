@@ -3,15 +3,14 @@ package service
 import (
 	"context"
 
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/cache"
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/errors"
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/item"
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/models"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/cache"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/errors"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/item"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/models"
 	"github.com/google/uuid"
 )
 
 type CartService interface {
-	Health(ctx context.Context) []models.Health
 	CreateCart(ctx context.Context) (models.Cart, error)
 	GetCart(ctx context.Context, cartID string) (models.Cart, error)
 	GetAvailableItems(ctx context.Context) ([]models.Item, error)
@@ -38,30 +37,6 @@ func NewCartService(version string, cache cache.Cache, externalService item.Exte
 	}
 }
 
-func (s *service) Health(ctx context.Context) []models.Health {
-	externalApiHealth := true
-
-	_, err := s.externalService.GetAllItems()
-	if err != nil {
-		externalApiHealth = false
-	}
-
-	return []models.Health{
-		{
-			Name:  "service",
-			Alive: true,
-		},
-		{
-			Name:  "Cache",
-			Alive: s.cache.Alive(),
-		},
-		{
-			Name:  "External Items API",
-			Alive: externalApiHealth,
-		},
-	}
-
-}
 func (s *service) CreateCart(ctx context.Context) (models.Cart, error) {
 	cartID := uuid.New().String()
 	cart := models.Cart{

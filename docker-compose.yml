@@ -8,11 +8,11 @@ services:
             target: builder
             context: .
         ports:
-            - 8080:8080
+            - 18080:8080
         volumes: 
-            - ./:/go/src/github.com/eduardohoraciosanto/BootcapWithGoKit
-            - swagger:/go/src/github.com/eduardohoraciosanto/BootcapWithGoKit/swagger
-            - ./oas/oas.yml:/go/src/github.com/eduardohoraciosanto/BootcapWithGoKit/swagger/swagger.yml
+            - ./:/go/src/github.com/eduardohoraciosanto/bootcamp-with-gorilla
+            - swagger:/go/src/github.com/eduardohoraciosanto/bootcamp-with-gorilla/swagger
+            - ./oas/oas.yml:/go/src/github.com/eduardohoraciosanto/bootcamp-with-gorilla/swagger/swagger.yml
         command: gowatch
         depends_on: 
             - redis
@@ -21,7 +21,7 @@ services:
         image: redis
         restart: always
         ports: 
-            - 6379:6379
+            - 16379:6379
     swagger:
         image: swaggerapi/swagger-ui:v3.23.10
         environment: 

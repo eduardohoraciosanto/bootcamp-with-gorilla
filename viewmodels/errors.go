@@ -18,6 +18,7 @@ const (
 
 var (
 	StandardInternalServerError = Error{ErrCodeInternalServerError, ErrDescriptionInternalServerError}
+	StandardBadBodyRequest      = Error{ErrCodeBadRequest, ErrDescriptionBadRequestBody}
 )
 
 type Error struct {

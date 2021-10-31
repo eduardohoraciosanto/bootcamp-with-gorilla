@@ -5,9 +5,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
 	"github.com/go-redis/redis/v8"
+	"github.com/sirupsen/logrus"
 )
 
 type Cache interface {
@@ -20,56 +19,56 @@ type Cache interface {
 type redisCache struct {
 	client *redis.Client
 	ttl    time.Duration
-	logger log.Logger
+	logger *logrus.Logger
 }
 
-func NewRedisCache(logger log.Logger, ttl time.Duration, client *redis.Client) Cache {
+func NewRedisCache(logger *logrus.Logger, ttl time.Duration, client *redis.Client) Cache {
 	return &redisCache{
 		client: client,
 		ttl:    ttl,
-		logger: log.With(logger, "service", "Cache"),
+		logger: logger,
 	}
 }
 
 func (c *redisCache) Set(key string, value interface{}) error {
 	b, err := json.Marshal(value)
 	if err != nil {
-		level.Error(c.logger).Log("cache_error", err)
+		c.logger.WithError(err).Error("cache_error")
 		return err
 	}
-	level.Info(c.logger).Log("cache_action", "Saving Value to Key", "key", key, "value", value)
+	c.logger.WithField("key", key).WithField("value", value).Log(logrus.InfoLevel, "Saving Value to Key")
 	err = c.client.Set(context.Background(), key, string(b), c.ttl).Err()
 	if err != nil {
-		level.Error(c.logger).Log("cache_error", err)
+		c.logger.WithError(err).Error("cache_error")
 		return err
 	}
 	return nil
 }
 
 func (c *redisCache) Get(key string, here interface{}) error {
-	level.Info(c.logger).Log("cache_action", "Retrieving Key", "key", key)
+	c.logger.WithField("key", key).Log(logrus.InfoLevel, "Retrieving Key")
 	val, err := c.client.Get(context.Background(), key).Result()
 	if err != nil {
-		level.Error(c.logger).Log("cache_error", err)
+		c.logger.WithError(err).Error("cache_error")
 		return err
 	}
 	err = json.Unmarshal([]byte(val), here)
 	if err != nil {
-		level.Error(c.logger).Log("cache_error", err)
+		c.logger.WithError(err).Error("cache_error")
 		return err
 	}
 	return nil
 }
 
 func (c *redisCache) Del(key string) error {
-	level.Info(c.logger).Log("cache_action", "Deleting Key", "key", key)
+	c.logger.WithField("key", key).Log(logrus.InfoLevel, "Deleting Key")
 	numErased, err := c.client.Del(context.Background(), key).Result()
 	if err != nil {
-		level.Error(c.logger).Log("cache_error", err)
+		c.logger.WithError(err).Error("cache_error")
 		return err
 	}
 	if numErased == 0 {
-		level.Error(c.logger).Log("cache_error", "Key not Found")
+		c.logger.Error("cache key not found")
 		return redis.Nil
 	}
 
@@ -77,9 +76,9 @@ func (c *redisCache) Del(key string) error {
 }
 
 func (c *redisCache) Alive() bool {
-	level.Info(c.logger).Log("cache_action", "Pinging Server")
+	c.logger.Log(logrus.InfoLevel, "Pinging Redis")
 	if c.client.Ping(context.Background()).Err() != nil {
-		level.Error(c.logger).Log("cache_error", "Cache not connected")
+		c.logger.Error("cache not connected")
 		return false
 	}
 	return true

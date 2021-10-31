@@ -7,9 +7,21 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	serviceErrors "github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/errors"
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/viewmodels"
+	serviceErrors "github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/errors"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/viewmodels"
 )
+
+func TestRespondWithData(t *testing.T) {
+	r := httptest.NewRecorder()
+	data := viewmodels.Cart{
+		ID: "testCart",
+	}
+	viewmodels.RespondWithData(r, http.StatusOK, data)
+
+	if r.Result().StatusCode != http.StatusOK {
+		t.Fatalf("Unexpected Status Code")
+	}
+}
 
 func TestRespondWithErrNotFound(t *testing.T) {
 	r := httptest.NewRecorder()

@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/config"
-	serviceErrors "github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/errors"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/config"
+	serviceErrors "github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/errors"
 )
 
 type Meta struct {

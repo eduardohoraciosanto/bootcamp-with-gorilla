@@ -3,7 +3,7 @@ package errors_test
 import (
 	"testing"
 
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/errors"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/errors"
 )
 
 func TestErrorCode(t *testing.T) {

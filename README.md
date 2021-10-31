@@ -1,7 +1,6 @@
-# Golang Bootcamp API with GoKit
+# Golang Bootcamp API with Gorilla
 
-In an effort to get the most out of GoKit, I'll be solving the API exercise of the bootcamp using it.
-Also I'll try to come up with the best folder organization that feels natural and easy to understand.
+This is a solution of the third exercise of the Boot-Camp using Gorilla Mux.
 
 ---
 
@@ -21,7 +20,6 @@ This exercise is about a REST API that lets you:
 
 I'll use Redis as a Database.
 Since the idea is a simple Cart API, a NO-SQL Database seems perfect.
-Also my focus will be in the organization of the project and the usage of GoKit.
 
 ## Documentation
 Documentation of the endpoints will be done using OpenAPI spec in Swagger format.  

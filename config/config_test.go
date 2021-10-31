@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/config"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/config"
 )
 
 func TestGetVersion(t *testing.T) {

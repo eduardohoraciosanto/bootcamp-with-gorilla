@@ -8,36 +8,33 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/config"
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/cache"
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/item"
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/pkg/service"
-	"github.com/eduardohoraciosanto/BootcapWithGoKit/transport"
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/config"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/cache"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/health"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/item"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/pkg/service"
+	"github.com/eduardohoraciosanto/bootcamp-with-gorilla/transport"
+
 	"github.com/go-redis/redis/v8"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	logger := log.NewJSONLogger(log.NewSyncWriter(os.Stdout))
-	logger = level.NewFilter(logger, level.AllowInfo())
-	logger = log.With(logger, "caller", log.DefaultCaller)
-
-	level.Info(logger).Log("action", "Application Started", "app_version", config.GetVersion())
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+	log := logrus.New()
 
 	redisClient := redis.NewClient(&redis.Options{
-		Addr: config.GetEnvString(config.RedisServerKey, ""),
-
+		Addr:     config.GetEnvString(config.RedisServerKey, ""),
 		Password: config.GetEnvString(config.RedisPasswordKey, ""),
 	})
 
 	cacheClient := cache.NewRedisCache(
-		logger,
+		log.WithField("owner", "cache").Logger,
 		0,
 		redisClient,
 	)
 
-	itemsExternalService := item.NewExternalService(logger, &http.Client{
+	itemsExternalService := item.NewExternalService(log.WithField("owner", "external service").Logger, &http.Client{
 		Timeout: time.Second * 10,
 	})
 
@@ -47,9 +44,12 @@ func main() {
 		itemsExternalService,
 	)
 
-	svc = service.NewServiceWithLogger(svc, logger)
+	hsvc := health.NewService(
+		cacheClient,
+		itemsExternalService,
+	)
 
-	httpTransportRouter := transport.NewHTTPRouter(svc, transport.NewHTTPLogger(logger))
+	httpTransportRouter := transport.NewHTTPRouter(svc, hsvc)
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("0.0.0.0:%s", config.GetPort()),
@@ -59,18 +59,18 @@ func main() {
 		IdleTimeout:  time.Second * 60,
 		Handler:      httpTransportRouter,
 	}
-	level.Info(logger).Log(
-		"action", "Transport Start",
-		"transport", "http",
-		"port", config.GetPort())
-
+	log.WithField(
+		"transport", "http").
+		WithField(
+			"port", config.GetPort()).
+		Log(logrus.InfoLevel, "Transport Start")
 	// Run our server in a goroutine so that it doesn't block.
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
-			level.Error(logger).Log(
-				"action", "Transport Stopped",
-				"transport", "http",
-				"reason", err)
+			log.WithField(
+				"transport", "http").
+				WithError(err).
+				Log(logrus.ErrorLevel, "Transport Stopped")
 		}
 	}()
 
@@ -90,6 +90,6 @@ func main() {
 	// Optionally, you could run srv.Shutdown in a goroutine and block on
 	// <-ctx.Done() if your application should wait for other services
 	// to finalize based on context cancellation.
-	level.Info(logger).Log("action", "Service gracefully shutted down")
+	log.Log(logrus.InfoLevel, "Service gracefully shutted down")
 	os.Exit(0)
 }
